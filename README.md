@@ -11,4 +11,4 @@ Zaguas is a project for Mobiles Apps's course, and in this repository will be th
 
 * **Jean Carlos Brenes Zúñiga** - https://github.com/JLean30 
 * **Hiram Gonzalez** - https://github.com/mrhiram 
-* **Priscilla Rivera Blanco** - https://github.com/pririvera19
+* **Priscilla Rivera Blanco** - https://github.com/pririvera
