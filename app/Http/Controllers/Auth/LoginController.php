@@ -1,39 +1,66 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
+use App\User;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
+    
 
-    use AuthenticatesUsers;
+    use AuthenticatesUsers, IssueTokenTrait;
+    
+    private $user;
+	public function __construct(){
+		$this->user = User::find(1);
+	}
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
+    public function login (Request $request) {
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest')->except('logout');
+        $user = User::where('email', $request->email)->first();
+    
+        if ($user) {
+    
+            if (Hash::check($request->password, $user->password)) {
+               //verificacion si el usuario esta activo
+                if($user->active){
+                    $token = $user->createToken('Laravel Password Grant Client')->accessToken;
+                    $response = ['token' => $token];
+                    return response($response, 200);
+                }else{
+                    $response = "usuario no verificado";
+                    return response($response,422);
+                }
+                
+            } else {
+                $response = "Password missmatch";
+                return response($response, 422);
+            }
+    
+        } else {
+            $response = 'User does not exist';
+            return response($response, 422);
+        }
+    
+    }
+
+    public function logout (Request $request) {
+
+        $token = $request->user()->token();
+        $token->revoke();
+    
+        $response = 'You have been succesfully logged out!';
+        return response($response, 200);
+    
+    }
+
+    public function refresh(Request $request){
+    	$this->validate($request, [
+    		'refresh_token' => 'required'
+    	]);
+    	return $this->issueToken($request, 'refresh_token');
     }
 }

@@ -4,12 +4,14 @@ use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use App\Notifications\SignupActivate;
 class AuthController extends Controller
 {
     public function register (Request $request) {
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'lastName' =>'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -20,45 +22,35 @@ class AuthController extends Controller
         }
     
         $request['password']=Hash::make($request['password']);
+        $request['activation_token'] = str_random(60);
         $user = User::create($request->toArray());
     
-        $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-        $response = ['token' => $token];
-    
+        //$token = $user->createToken('Laravel Password Grant Client')->accessToken;
+        //$response = ['token' => $token];
+        $response="user created";
+        $user->notify(new SignupActivate($user));
         return response($response, 200);
     
     }
-    public function login (Request $request) {
-
-        $user = User::where('email', $request->email)->first();
-    
-        if ($user) {
-    
-            if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-                $response = ['token' => $token];
-                return response($response, 200);
-            } else {
-                $response = "Password missmatch";
-                return response($response, 422);
-            }
-    
-        } else {
-            $response = 'User does not exist';
-            return response($response, 422);
-        }
-    
+    public function signupActivate($token)
+{
+    $user = User::where('activation_token', $token)->first();
+    if (!$user) {
+        $response= 'This activation token is invalid.';
+        return response($response, 404);
     }
-
-    public function logout (Request $request) {
-
-        $token = $request->user()->token();
-        $token->revoke();
+    $user->active = true;
+    $user->activation_token = '';
     
-        $response = 'You have been succesfully logged out!';
-        return response($response, 200);
+    $user->email_verified_at = date('Y-m-d H:i:s');
+    $user->save();
+    //posibilidad de redirigir con un enlace simbolico al usuario y loguearlo al verificarse.
+    $token = $user->createToken('Laravel Password Grant Client')->accessToken;
+    $response = ['token' => $token];
+    return $user;
+}
+
     
-    }
 
     public function user(Request $request)
     {
