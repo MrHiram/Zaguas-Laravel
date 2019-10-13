@@ -12,7 +12,7 @@ class Pet extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'size', 'temperament','race','description','allergies','
+        'image','name', 'size', 'temperament','race','description','allergies','
         feeding','specials_care'
     ];
 

@@ -42,6 +42,13 @@ class User extends Authenticatable
 
     /**Relations */
 
+    /**relacion de usuario Roles */
+
+    public function roles(){
+        
+        return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
     /**Relation between owner and pets */
     public function pets()
     {

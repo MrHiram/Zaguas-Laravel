@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });*/
 
 Route::group(['middleware' => ['json.response']], function () {
+    Route::middleware('auth:api')->post('assignRole', 'RoleController@assignRole');
     Route::get('forgotPassword/{email}', 'Auth\ForgotPasswordController@forgotPassword');
     Route::get('resetPassword/{token}', 'Auth\ForgotPasswordController@forgotPasswordActivate');
     Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -26,7 +27,7 @@ Route::group(['middleware' => ['json.response']], function () {
         $data = ["id" => $request->user()->id, "correo" =>$request->user()->email ,"nombre" =>$request->user()->name];
         return $data;
     });
-
+    Route::get('prueba', function(){return response('patos',200);});
     // public routes
     Route::post('/login', 'Auth\LoginController@login')->name('login.api');
     Route::post('/register', 'AuthController@register')->name('register.api');
