@@ -13,7 +13,7 @@ class Pet extends Model
      */
     protected $fillable = [
         'image','name', 'size', 'temperament','race','description','allergies','
-        feeding','specials_care'
+        feeding','specials_cares'
     ];
 
     /**Relation between pet and owner */

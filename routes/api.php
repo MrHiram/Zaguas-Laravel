@@ -19,6 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });*/
 
 Route::group(['middleware' => ['json.response']], function () {
+    //crud mascota
+    Route::middleware('auth:api')->post('addPet','PetController@create');
+    Route::middleware('auth:api')->post('editPet','PetController@edit');
     Route::middleware('auth:api')->post('assignRole', 'RoleController@assignRole');
     Route::get('forgotPassword/{email}', 'Auth\ForgotPasswordController@forgotPassword');
     Route::get('resetPassword/{token}', 'Auth\ForgotPasswordController@forgotPasswordActivate');

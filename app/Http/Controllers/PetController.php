@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Pet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+
 
 class PetController extends Controller
 {
@@ -22,9 +25,42 @@ class PetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'name' =>'required|string|max:120',
+            'size' => 'required|string|max:120|',
+            'temperament' => 'required|string|max:120|',
+            'race' => 'required|string|max:120|',
+            'description' => 'required|string|max:255|',
+            'allergies' => 'required|string|max:255|',
+            'feeding' => 'required|string|max:255|',
+            'specials_cares' => 'required|string|max:255|',
+        ]);
+    
+        if ($validator->fails())
+        {
+            return response(['errors'=>$validator->errors()->all()], 422);
+        }
+        $image= $request->file('image');
+        $pet = new Pet;
+        $pet ->user_id= $request->user()->id;
+        $extension = $image->getClientOriginalExtension(); // you can also use file name
+        $fileName = time().'.'.$extension;
+        $path = public_path().'/pets';
+        $pet ->image = $fileName ;
+        $image->move($path, $fileName);
+        $pet ->name=$request->name ;
+        $pet ->size=$request->size;
+        $pet ->temperament=$request->temperament;
+        $pet ->race=$request->race ;
+        $pet ->description=$request->description;
+        $pet ->allergies=$request->allergies ;
+        $pet ->feeding=$request->feeding ;
+        $pet ->specials_cares=$request->specials_cares;
+        $pet->save();
+        return response($pet, 200);
     }
 
     /**
@@ -55,9 +91,14 @@ class PetController extends Controller
      * @param  \App\Pet  $pet
      * @return \Illuminate\Http\Response
      */
-    public function edit(Pet $pet)
+    public function edit(Request $request)
     {
-        //
+        $pet=Pet::where('id',1)->first();
+
+        if($request->user()->id === $pet->user_id){
+            return response('edit',200);
+        }
+        return response('no',422);
     }
 
     /**
