@@ -32,7 +32,7 @@ class PasswordResetNotification extends Notification
     {
         // $url = 'exp://192.168.1.4:19000/--/resetPassword/'.$this->token;
     
-        $url = 'localhost:8000/api/resetPassword/'.$notifiable->remember_token;
+        $url = 'exp://192.168.1.6:19000/--/checkForgotPasswordToken/'.$notifiable->remember_token;
         
         
         return (new MailMessage)

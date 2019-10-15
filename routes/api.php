@@ -23,8 +23,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::middleware('auth:api')->post('addPet','PetController@create');
     Route::middleware('auth:api')->post('editPet','PetController@edit');
     Route::middleware('auth:api')->post('assignRole', 'RoleController@assignRole');
-    Route::get('forgotPassword/{email}', 'Auth\ForgotPasswordController@forgotPassword');
-    Route::get('resetPassword/{token}', 'Auth\ForgotPasswordController@forgotPasswordActivate');
+   
     Route::middleware('auth:api')->get('/user', function (Request $request) {
         //modificar segun la necesidad que requiera
         $data = ["id" => $request->user()->id, "correo" =>$request->user()->email ,"nombre" =>$request->user()->name];
@@ -36,6 +35,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::post('/register', 'Auth\RegisterController@register')->name('register.api');
     Route::post('/auth/token','Auth\LoginController@refresh');
 
+
+    //forgot password 
+    Route::get('checkForgotPasswordToken/{token}', 'Auth\ForgotPasswordController@forgotPasswordActivateCheck');
+    Route::get('forgotPassword/{email}', 'Auth\ForgotPasswordController@forgotPassword');
+    Route::post('resetPassword/', 'Auth\ForgotPasswordController@forgotPasswordActivate');
     // private routes
     
     Route::middleware('auth:api')->get('/logout', 'Auth\LoginController@logout');
