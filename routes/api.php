@@ -32,13 +32,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     });
     Route::get('prueba', function(){return response('patos',200);});
     // public routes
-    Route::post('/login', 'Auth\LoginController@login')->name('login.api');
+    Route::post('/login', 'Auth\LoginController@login');
     Route::post('/register', 'Auth\RegisterController@register')->name('register.api');
     Route::post('/auth/token','Auth\LoginController@refresh');
 
     // private routes
-    Route::middleware('auth:api')->group(function () {
-        Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
-    });
+    
+    Route::middleware('auth:api')->get('/logout', 'Auth\LoginController@logout');
+    
     Route::get('signup/activate/{token}', 'Auth\RegisterController@signupActivate');
     

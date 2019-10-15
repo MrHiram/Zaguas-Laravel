@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use App\Notifications\SignupActivate;
 
 class RegisterController extends Controller
 {
@@ -71,7 +73,7 @@ class RegisterController extends Controller
     }
 
     public function register(Request $request){
-        $validatedData = $this->validate($request, [
+        $valitatedData = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'lastname' =>'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -80,16 +82,20 @@ class RegisterController extends Controller
 
         $request['password']=Hash::make($request['password']);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->lastname =  $request->lastname;
-        $user->email = $request->email;
-        $user->password = $request->password;
-        $user->activation_token = str_random(60);
-        $user->save();
-        
-        $user->notify(new SignupActivate($user));
-        return response(['message' => 'user created']);
+        if($valitatedData->fails()){
+            return response(['error'=>$valitatedData->errors()->all()]);
+        }else{
+            $user = new User();
+            $user->name = $request->name;
+            $user->lastname =  $request->lastname;
+            $user->email = $request->email;
+            $user->password = $request->password;
+            $user->activation_token = str_random(60);
+            $user->save();
+            
+            $user->notify(new SignupActivate($user));
+            return response(['message' => 'user created']);
+        }
     }
 
     public function signupActivate($token)
@@ -106,6 +112,7 @@ class RegisterController extends Controller
         $user->save();
         $token = $user->createToken('Laravel Password Grant Client')->accessToken;
         $response = ['token' => $token];
-        return $user;
+        $url= 'exp://192.168.1.6:19000/--/validateEmail/'+$token;
+        return Redirect::to($url);
     }
 }
