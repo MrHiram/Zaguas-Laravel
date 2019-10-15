@@ -19,12 +19,12 @@ class ForgotPasswordController extends Controller
             $user->remember_token=$token;
             $user->save();
             $user->notify(new PasswordResetNotification($user));
-            $response = 'Su recuperacion de contraseña está en proceso, por favor verifique su correo';
-            return response($response,200);
+            $response = 'email sent';
+            return response(['message' => $response],200);
 
         }else{
             $response = 'Este correo no existe';
-            return response($response,422);
+            return response(['message' => $response],401);
         }
     }
 
