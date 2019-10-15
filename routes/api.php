@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });*/
 
-Route::group(['middleware' => ['json.response']], function () {
+
     //crud mascota
     Route::middleware('auth:api')->post('addPet','PetController@create');
     Route::middleware('auth:api')->post('editPet','PetController@edit');
@@ -33,13 +33,12 @@ Route::group(['middleware' => ['json.response']], function () {
     Route::get('prueba', function(){return response('patos',200);});
     // public routes
     Route::post('/login', 'Auth\LoginController@login')->name('login.api');
-    Route::post('/register', 'AuthController@register')->name('register.api');
+    Route::post('/register', 'Auth\RegisterController@register')->name('register.api');
     Route::post('/auth/token','Auth\LoginController@refresh');
 
     // private routes
     Route::middleware('auth:api')->group(function () {
         Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
     });
-    Route::get('signup/activate/{token}', 'AuthController@signupActivate');
+    Route::get('signup/activate/{token}', 'Auth\RegisterController@signupActivate');
     
-});

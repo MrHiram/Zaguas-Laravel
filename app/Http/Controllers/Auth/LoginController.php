@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
     
-
     use AuthenticatesUsers, IssueTokenTrait;
     
     private $user;
@@ -20,31 +20,26 @@ class LoginController extends Controller
 
     public function login (Request $request) {
 
-        $user = User::where('email', $request->email)->first();
-    
-        if ($user) {
-    
-            if (Hash::check($request->password, $user->password)) {
-               //verificacion si el usuario esta activo
-                if($user->active){
-                    $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-                    $response = ['token' => $token];
-                    return response($response, 200);
+        $valitatedData = Validator::make($request->all(), [
+            'email'=>'required|email',
+            'password'=>'required',
+        ]);
+
+        if($valitatedData->fails()){
+            return response(['error'=>$valitatedData->errors()->all()]);
+        }else{
+            if(auth()->attempt($request->all())){
+                $accessToken = auth()->user()->createToken('authToken')->accessToken;
+                return response(['user' => auth()->user(), 'accessToken'=>$accessToken], 200);
+            }else{
+                $user = User::where('email', $request->email)->first();
+                if (!$user) {
+                    return response(['error'=>['User does not exist']]);
                 }else{
-                    $response = "usuario no verificado";
-                    return response($response,422);
+                    return response(['error'=>['Invalid credentials']]);
                 }
-                
-            } else {
-                $response = "Password missmatch";
-                return response($response, 422);
             }
-    
-        } else {
-            $response = 'User does not exist';
-            return response($response, 422);
         }
-    
     }
 
     public function logout (Request $request) {
@@ -53,7 +48,7 @@ class LoginController extends Controller
         $token->revoke();
     
         $response = 'You have been succesfully logged out!';
-        return response($response, 200);
+        return response(['message'=>$response], 200);
     
     }
 

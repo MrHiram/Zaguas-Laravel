@@ -15,10 +15,10 @@ class UserSeeder extends Seeder
     {
         $user = new User;
 
-        $user->name ="patos";
-        $user->last_name ="patos";
-        $user->email ="patos@gmail.com";
-        $user->password= Hash::make("patos");
+        $user->name ="Admin";
+        $user->lastname ="Sudo";
+        $user->email ="admin@zaguas.com";
+        $user->password= Hash::make("patos1234");
         $user->activation_token = str_random(60);
         $user->save();
     }

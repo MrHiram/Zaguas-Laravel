@@ -69,4 +69,43 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
+
+    public function register(Request $request){
+        $validatedData = $this->validate($request, [
+            'name' => 'required|string|max:255',
+            'lastname' =>'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $request['password']=Hash::make($request['password']);
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->lastname =  $request->lastname;
+        $user->email = $request->email;
+        $user->password = $request->password;
+        $user->activation_token = str_random(60);
+        $user->save();
+        
+        $user->notify(new SignupActivate($user));
+        return response(['message' => 'user created']);
+    }
+
+    public function signupActivate($token)
+    {
+        $user = User::where('activation_token', $token)->first();
+        if (!$user) {
+            $response= 'This activation token is invalid.';
+            return response($response, 404);
+        }
+        $user->active = true;
+        $user->activation_token = '';
+        
+        $user->email_verified_at = date('Y-m-d H:i:s');
+        $user->save();
+        $token = $user->createToken('Laravel Password Grant Client')->accessToken;
+        $response = ['token' => $token];
+        return $user;
+    }
 }
