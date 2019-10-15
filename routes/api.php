@@ -39,6 +39,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     // private routes
     
     Route::middleware('auth:api')->get('/logout', 'Auth\LoginController@logout');
+    Route::middleware('auth:api')->get('/checkToken', 'Auth\LoginController@check');
     
     Route::get('signup/activate/{token}', 'Auth\RegisterController@signupActivate');
     
