@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     public function check(Request $request){
-        return response(['message'=>'There are patos']);
+        return response(['message'=>'There are patos'], 200);
     }
     public function user(Request $request)
     {

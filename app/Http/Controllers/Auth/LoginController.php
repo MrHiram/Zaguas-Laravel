@@ -28,16 +28,20 @@ class LoginController extends Controller
         if($valitatedData->fails()){
             return response(['error'=>$valitatedData->errors()->all()]);
         }else{
-            if(auth()->attempt($request->all())){
-                $accessToken = auth()->user()->createToken('authToken')->accessToken;
-                return response(['user' => auth()->user(), 'accessToken'=>$accessToken], 200);
-            }else{
-                $user = User::where('email', $request->email)->first();
-                if (!$user) {
-                    return response(['error'=>['User does not exist']]);
-                }else{
-                    return response(['error'=>['Invalid credentials']]);
+            $user = User::where('email', $request->email)->first();
+            if($user->active){
+                if(auth()->attempt($request->all())){
+                    $accessToken = auth()->user()->createToken('authToken')->accessToken;
+                    return response(['user' => auth()->user(), 'accessToken'=>$accessToken], 200);
+                }else{                
+                    if (!$user) {
+                        return response(['error'=>['User does not exist']]);
+                    }else{
+                        return response(['error'=>['Invalid credentials']]);
+                    }
                 }
+            }else{
+                return response(['error'=>['Inactive user']]);
             }
         }
     }
