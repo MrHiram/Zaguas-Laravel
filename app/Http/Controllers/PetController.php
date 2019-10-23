@@ -63,6 +63,8 @@ class PetController extends Controller
         return response($pet, 200);
     }
 
+    
+
     /**
      * Store a newly created resource in storage.
      *

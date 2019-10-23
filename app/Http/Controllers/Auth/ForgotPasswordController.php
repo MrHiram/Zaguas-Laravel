@@ -28,22 +28,46 @@ class ForgotPasswordController extends Controller
         }
     }
 
-    public function forgotPasswordActivate($token)
-    {
-        $user = User::where('remember_token', $token)->first();
-        if (!$user) {
-            $response= 'This activation token is invalid.';
-            return response($response, 404);
+    public function forgotPasswordActivateCheck($token){
+        $user = User::where('remember_token',$token)->first();
+
+        if($user){
+            $response = 'Token valido';
+            return response(['message'=> $response],200);
+        }else{
+            $response = 'Token invalido';
+            return response(['message'=> $response],404);
         }
-        $user->remember_token = '';
-        $user->udated_at = date('Y-m-d H:i:s');
-        //$user->save();
+    }
+    public function forgotPasswordActivate(Request $request)
+    {
+        $valitatedData = Validator::make($request->all(), [
+            'token' => 'required',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $newPassword=Hash::make($request['password']);
+
+        if($valitatedData->fails()){
+            return response(['error'=>$valitatedData->errors()->all()]);
+        }else{
+            $user = User::where('remember_token', $request->token)->first();
+             if (!$user) {
+                 $response= 'This activation token is invalid.';
+                return response($response, 404);
+              }
+            $user->remember_token = '';
+            $user->password= $newPassword;
+            $user->udated_at = date('Y-m-d H:i:s');
+            $user->save;
+        
         //posibilidad de redirigir con un enlace simbolico al usuario y loguearlo al verificarse.
         //$token = $user->createToken('Laravel Password Grant Client')->accessToken;
         //$response = ['token' => $token];
         //return $user;
-        $url= 'http://www.patos.com';
-        return Redirect::to($url);
+             $response= 'Contraseña cambiada corrrectamente';
+            return response(['message'=>$response],200);
+        }
     }
 
     /**
