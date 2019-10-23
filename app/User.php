@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+use Laravel\Passport\HasApiTokens;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -8,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name','lastname', 'email', 'password','active', 'activation_token'
     ];
 
     /**
@@ -25,7 +26,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','activation_token'
     ];
 
     /**
@@ -36,4 +37,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    
+
+    /**Relations */
+
+    /**relacion de usuario Roles */
+
+    public function roles(){
+        
+        return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
+    /**Relation between owner and pets */
+    public function pets()
+    {
+        return $this->hasMany(Pet::class);
+    }
 }
