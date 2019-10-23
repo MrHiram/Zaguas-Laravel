@@ -35,6 +35,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::post('/login', 'Auth\LoginController@login');
     Route::post('/register', 'Auth\RegisterController@register')->name('register.api');
     Route::post('/auth/token','Auth\LoginController@refresh');
+    Route::post('resetPassword', 'Auth\ResetPasswordController@resetPassword');
 
     // private routes
     
@@ -42,4 +43,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::middleware('auth:api')->get('/checkToken', 'AuthController@check');
     
     Route::get('signup/activate/{token}', 'Auth\RegisterController@signupActivate');
-    
+    Route::get('reset/redirect/{token}', 'Auth\ResetPasswordController@resetRedirect');

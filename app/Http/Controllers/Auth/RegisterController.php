@@ -113,7 +113,7 @@ class RegisterController extends Controller
         $user->save();
         $token = $user->createToken('Laravel Password Grant Client')->accessToken;
         $response = ['token' => $token];
-        $url= "exp://192.168.1.6:19000/--/validateEmail/".$token;
+        $url= "exp://192.168.43.156:19000/--/validateEmail/".$token;
         return Redirect::to($url);
     }
 }
