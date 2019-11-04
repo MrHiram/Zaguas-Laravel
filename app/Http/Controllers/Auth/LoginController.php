@@ -31,15 +31,21 @@ class LoginController extends Controller
             $user = User::where('email', $request->email)->first();
             if($user->active){
                 if(auth()->attempt($request->all())){
-                    $accessToken = auth()->user()->createToken('authToken')->accessToken;
-                    return response(['user' => auth()->user(), 'accessToken'=>$accessToken], 200);
-                }else{                
-                    if (!$user) {
+                    $hasRole = auth()->user()->hasAnyRole(["client","care_taker"]);
+                    if($hasRole){
+                        $accessToken = auth()->user()->createToken('authToken')->accessToken;
+                        return response(['user' => auth()->user(), 'accessToken'=>$accessToken], 200);
+                    }else{
+                        $accessToken = auth()->user()->createToken('authToken')->accessToken;
+                        return response(['user' => auth()->user(), 'accessToken'=>$accessToken,'profile'=>'profile does not exist'],200);
+                    }
+                    
+                }else if (!$user) {
                         return response(['error'=>['User does not exist']]);
                     }else{
                         return response(['error'=>['Invalid credentials']]);
                     }
-                }
+                
             }else{
                 return response(['error'=>['Inactive user']]);
             }
