@@ -13,7 +13,7 @@ class ClientProfileController extends Controller
     public function register(Request $request){
         $valitatedData = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'about' =>'required|string|max:255',
+            'aboutMe' =>'required|string|max:255',
             'phone' => 'required|string',
             'address' => 'required|string|max:255',
         ]);
@@ -38,7 +38,7 @@ class ClientProfileController extends Controller
             
             $clientProfile->image = $fileName ;
             $clientProfile ->user_id= $request->user()->id;
-            $clientProfile->about =  $request->about;
+            $clientProfile->about =  $request->aboutMe;
             $clientProfile->phone = $request->phone;
             $clientProfile->address = $request->address;
             $clientProfile->save();
@@ -46,7 +46,7 @@ class ClientProfileController extends Controller
             $role=Role::where('name','client')->first();
             $user = $request->user();
             $user->roles()->attach($role);
-            return response(['message' => 'Profile client created']);
+            return response(['message' => 'Profile client created'],200);
         }
 
     }

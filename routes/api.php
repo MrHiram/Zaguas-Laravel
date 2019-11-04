@@ -46,7 +46,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
         //crud mascota
     Route::middleware('auth:api')->post('addPet','PetController@create');
     Route::middleware('auth:api')->post('editPet','PetController@edit');
-    Route::middleware('auth:api')->post('assignRole', 'RoleController@assignRole');
+    Route::middleware('auth:api')->post('assignClientRole', 'ClientProfileController@register');
     
     Route::get('signup/activate/{token}', 'Auth\RegisterController@signupActivate');
     Route::get('reset/redirect/{token}', 'Auth\ResetPasswordController@resetRedirect');

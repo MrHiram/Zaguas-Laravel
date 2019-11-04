@@ -42,7 +42,7 @@ class RoleController extends Controller
         $user = User::where('email',$email)->first();
         if($user)
         {
-            switch($request->tipo){
+            switch($request->type){
                 case 1:
                         $role=Role::where('name','client')->first();
                         $user->roles()->attach($role);
