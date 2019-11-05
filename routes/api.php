@@ -40,7 +40,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     
     // private routes
     
-    Route::middleware('auth:api')->get('/logout', 'Auth\LoginController@logout');
+    Route::middleware('auth:api')->post('/logout', 'Auth\LoginController@logout');
     Route::middleware('auth:api')->get('/checkToken', 'AuthController@check');
 
         //crud mascota
