@@ -36,7 +36,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     //forgot password 
     Route::get('checkForgotPasswordToken/{token}', 'Auth\ForgotPasswordController@forgotPasswordActivateCheck');
     Route::get('forgotPassword/{email}', 'Auth\ForgotPasswordController@forgotPassword');
-    Route::post('resetPassword/', 'Auth\ForgotPasswordController@forgotPasswordActivate');
     
     // private routes
     
