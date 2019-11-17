@@ -48,10 +48,10 @@ class ResetPasswordController extends Controller
 
         if($user){
             $response = 'Token valido';
-            $url= "exp://192.168.43.156:19000/--/resetPassword/".$token;
+            $url= "exp://192.168.1.17:19000/--/resetPassword/".$token;
             return Redirect::to($url);
         }else{
-            $url= "exp://192.168.43.156:19000/--/resetPassword/INVALID";
+            $url= "exp://192.168.1.17:19000/--/resetPassword/INVALID";
             return Redirect::to($url);
         }
 
