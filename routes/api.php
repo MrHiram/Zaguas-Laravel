@@ -23,8 +23,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
    
     Route::middleware('auth:api')->get('/user', function (Request $request) {
         //modificar segun la necesidad que requiera
-        $data = ["id" => $request->user()->id, "correo" =>$request->user()->email ,"nombre" =>$request->user()->name];
-        return $data;
+        return response(["id" => $request->user()->id, "correo" =>$request->user()->email ,"nombre" =>$request->user()->name],200);
+        
     });
     Route::get('prueba', function(){return response('patos',200);});
     // public routes

@@ -53,12 +53,12 @@ class ClientProfileController extends Controller
 
     public function getProfile(Request $request)
     {
-        $check = ClientProfile::where('id', $request->id)->first();
+        $check = User::where('id', $request->id)->first();
 
         if ($check) {
             $edit =false;
             $request->user() ? $request->user()->id == $check->user_id ? $edit= true: null :null;
-            $collections = User::where('id', $check->user_id)->with('clientProfile', 'pets')
+            $collections = User::where('id', $check->id)->with('clientProfile', 'pets')
                 ->get();
             foreach ($collections as $collection) {
                 $user["name"] = $collection->name;
@@ -81,7 +81,7 @@ class ClientProfileController extends Controller
             }
             return response(['user' => $user, 'profile' => $profile, 'pets' => $pets, "edit"=>$edit], 200);
         } else {
-            return response(['message' => 'El perfil no existe'], 404);
+            return response(['error' => 'El perfil no existe'], 200);
         }
     }
 }
