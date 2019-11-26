@@ -33,10 +33,10 @@ class PetController extends Controller
             'size' => 'required|string|max:120|',
             'temperament' => 'required|string|max:120|',
             'race' => 'required|string|max:120|',
-            'description' => 'required|string|max:255|',
-            'allergies' => 'required|string|max:255|',
-            'feeding' => 'required|string|max:255|',
-            'specials_cares' => 'required|string|max:255|',
+            'description' => 'string|max:255|',
+            'allergies' => 'string|max:255|',
+            'feeding' => 'string|max:255|',
+            'specials_cares' => 'string|max:255|',
         ]);
     
         if ($validator->fails())
@@ -55,10 +55,10 @@ class PetController extends Controller
         $pet ->size=$request->size;
         $pet ->temperament=$request->temperament;
         $pet ->race=$request->race ;
-        $pet ->description=$request->description;
-        $pet ->allergies=$request->allergies ;
-        $pet ->feeding=$request->feeding ;
-        $pet ->specials_cares=$request->specials_cares;
+        $request->description != null ? $pet ->description=$request->description : null;
+        $request->allergies != null ? $pet ->allergies=$request->allergies: null ;
+        $request->feeding != null ? $pet ->feeding=$request->feeding: null ;
+        $request->special_cares != null ? $pet ->allergies=$request->allergies: null ;
         $pet->save();
         return response($pet, 200);
     }

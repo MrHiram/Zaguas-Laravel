@@ -24,7 +24,7 @@ class CreatePetsTable extends Migration
             $table->string('race');
             $table->string('description')->nullable();
             $table->string('allergies')->nullable();
-            $table->string('feeding');
+            $table->string('feeding')->nullable();
             $table->string('specials_cares')->nullable();
             $table->timestamps();
         });

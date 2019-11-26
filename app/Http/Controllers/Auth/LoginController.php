@@ -29,8 +29,8 @@ class LoginController extends Controller
             return response(['error'=>$valitatedData->errors()->all()]);
         }else{
             $user = User::where('email', $request->email)->first();
-            if($user->active){
                 if(auth()->attempt($request->all())){
+                    if($user->active){
                     $hasRole = auth()->user()->hasAnyRole(["client","care_taker"]);
                     if($hasRole){
                         $accessToken = auth()->user()->createToken('authToken')->accessToken;
@@ -39,6 +39,9 @@ class LoginController extends Controller
                         $accessToken = auth()->user()->createToken('authToken')->accessToken;
                         return response(['user' => auth()->user(), 'accessToken'=>$accessToken,'profile'=>'profile does not exist'],200);
                     }
+                }else{
+                    return response(['error'=>['Inactive user']]);
+                }
                     
                 }else if (!$user) {
                         return response(['error'=>['User does not exist']]);
@@ -46,9 +49,7 @@ class LoginController extends Controller
                         return response(['error'=>['Invalid credentials']]);
                     }
                 
-            }else{
-                return response(['error'=>['Inactive user']]);
-            }
+            
         }
     }
 
