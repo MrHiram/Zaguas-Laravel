@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use App\Notifications\SignupActivate;
-use Illuminate\Support\Facades\Redirect;    
+use Illuminate\Support\Facades\Redirect;   
+use Illuminate\Routing\UrlGenerator; 
 
 class RegisterController extends Controller
 {
@@ -113,7 +114,7 @@ class RegisterController extends Controller
         $user->save();
         $token = $user->createToken('Laravel Password Grant Client')->accessToken;
         $response = ['token' => $token];
-        $url= "exp://192.168.1.17:19000/--/validateEmail/".$token;
+        $url= url("/--/validateEmail/".$token);
         return Redirect::to($url);
     }
 }

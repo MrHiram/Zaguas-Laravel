@@ -8,7 +8,6 @@ use App\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
-
 class ClientProfileController extends Controller
 {
     public function register(Request $request)
@@ -68,13 +67,13 @@ class ClientProfileController extends Controller
                 $profile["about"] = $collection->clientProfile->about;
                 $profile["address"] = $collection->clientProfile->address;
                 $profile["phone"] = $collection->clientProfile->phone;
-                $profile["image"] = $collection->clientProfile->image;
+                $profile["image"] = url("profileClients/".$collection->clientProfile->image);
                 if ($collection->pets) {
                     $i = 0;
                     foreach ($collection->pets as $pet) {
                         $pets[$i]["id"] = $pet->id;
                         $pets[$i]["name"] = $pet->name;
-                        $pets[$i]["image"] = $pet->image;
+                        $pets[$i]["image"] = url("pets/".$pet->image);
                         $i++;
                     }
                 }
