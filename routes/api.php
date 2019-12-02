@@ -42,6 +42,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::middleware('auth:api')->post('/logout', 'Auth\LoginController@logout');
     Route::middleware('auth:api')->get('/checkToken', 'AuthController@check');
     Route::middleware('auth:api')->get('getProfileClient/{id}', 'ClientProfileController@getProfile');
+    Route::middleware('auth:api')->get('pet/{id}', 'PetController@show');
 
         //crud mascota
     Route::middleware('auth:api')->post('addPet','PetController@create');

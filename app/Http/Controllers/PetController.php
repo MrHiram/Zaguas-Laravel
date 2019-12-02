@@ -82,9 +82,18 @@ class PetController extends Controller
      * @param  \App\Pet  $pet
      * @return \Illuminate\Http\Response
      */
-    public function show(Pet $pet)
+    public function show(Request $request)
     {
-        //
+        $pet = Pet::where('id', $request->id)->first();
+
+        if($pet){
+            $collections = Pet::where('id', $pet->id)->with('owner')
+            ->get();
+            return response(["pet" => $collections],200);
+
+        }else{
+            return response(["error" => "Pet not found"],404);
+        }
     }
 
     /**
