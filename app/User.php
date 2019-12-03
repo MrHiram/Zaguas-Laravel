@@ -57,6 +57,11 @@ class User extends Authenticatable
         
         return $this->hasOne(ClientProfile::class);
     }
+
+    public function careTakerProfile(){
+        
+        return $this->hasOne(CareTakerProfile::class);
+    }
     /**Authorize Roles  */
 
     public function authorizeRoles($roles)
