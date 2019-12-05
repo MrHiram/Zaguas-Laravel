@@ -114,7 +114,12 @@ class RegisterController extends Controller
         $user->save();
         $token = $user->createToken('Laravel Password Grant Client')->accessToken;
         $response = ['token' => $token];
-        $url= url("/--/validateEmail/".$token);
-        return Redirect::to($url);
+        $urlRaw= url("/--/validateEmail/".$token);
+        $urlReplace =str_replace(
+            array("http://","8000"),
+            array("exp://", "19000"),
+            $urlRaw
+        );
+        return Redirect::to($urlReplace);
     }
 }
