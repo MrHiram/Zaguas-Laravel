@@ -1,8 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Exception;
+use App\CareTakerProfile;
+use App\Role;
+use App\User;
+
 
 class CareTakerProfileController extends Controller
 {
@@ -53,17 +58,17 @@ class CareTakerProfileController extends Controller
         if ($check) {
             $edit =false;
             $request->user() ? $request->user()->id == $check->user_id ? $edit= true: null :null;
-            $collections = User::where('id', $check->id)->with('clientProfile', 'pets')
+            $collections = User::where('id', $check->id)->with('careTakerProfile', 'homes')
                 ->get();
             foreach ($collections as $collection) {
                 $user["name"] = $collection->name;
                 $user["lastname"] = $collection->lastname;
                 $user["email"] = $collection->email;
-                $profile["id"] = $collection->clientProfile->id;
-                $profile["about"] = $collection->clientProfile->about;
-                $profile["address"] = $collection->clientProfile->address;
-                $profile["phone"] = $collection->clientProfile->phone;
-                $profile["image"] = url("profileClients/".$collection->clientProfile->image);
+                $profile["id"] = $collection->careTakerProfile->id;
+                $profile["about"] = $collection->careTakerProfile->about;
+                $profile["address"] = $collection->careTakerProfile->address;
+                $profile["phone"] = $collection->careTakerProfile->phone;
+                $profile["image"] = url("profileCareTaker/".$collection->careTakerProfile->image);
                 if ($collection->pets) {
                     $i = 0;
                     foreach ($collection->pets as $pet) {

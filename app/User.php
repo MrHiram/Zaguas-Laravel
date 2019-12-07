@@ -53,6 +53,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pet::class);
     }
+
+    public function homes()
+    {
+        return $this->hasMany(Home::class);
+    }
     public function clientProfile(){
         
         return $this->hasOne(ClientProfile::class);

@@ -7,6 +7,7 @@ use App\Role;
 use App\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Exception;
 
 class ClientProfileController extends Controller
 {
