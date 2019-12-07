@@ -61,6 +61,7 @@ class CareTakerProfileController extends Controller
             $collections = User::where('id', $check->id)->with('careTakerProfile', 'homes')
                 ->get();
             foreach ($collections as $collection) {
+                $homes =[];
                 $user["name"] = $collection->name;
                 $user["lastname"] = $collection->lastname;
                 $user["email"] = $collection->email;
@@ -69,17 +70,22 @@ class CareTakerProfileController extends Controller
                 $profile["address"] = $collection->careTakerProfile->address;
                 $profile["phone"] = $collection->careTakerProfile->phone;
                 $profile["image"] = url("profileCareTaker/".$collection->careTakerProfile->image);
-                if ($collection->pets) {
+                if (!empty($collection->homes)) {
                     $i = 0;
-                    foreach ($collection->pets as $pet) {
-                        $pets[$i]["id"] = $pet->id;
-                        $pets[$i]["name"] = $pet->name;
-                        $pets[$i]["image"] = url("pets/".$pet->image);
+                    foreach ($collection->homes as $home) {
+                        $homes[$i]["id"] = $home->id;
+                        $homes[$i]["description"] = $home->description;
+                        $homes[$i]["image"] = url("pets/".$home->image);
+                        $homes[$i]["price_per_night"] = $home->price_per_night;
+                        $homes[$i]["capacity"] = $home->capacity;
+                        $homes[$i]["walk"] = $home->walk;
+                        $homes[$i]["days_available"] = $home->days_available;
                         $i++;
                     }
+                    return response(['user' => $user, 'profile' => $profile, 'homes' => $homes, "edit"=>$edit], 200);
                 }
             }
-            return response(['user' => $user, 'profile' => $profile, 'pets' => $pets, "edit"=>$edit], 200);
+            return response(['user' => $user, 'profile' => $profile, "edit"=>$edit], 200);
         } else {
             return response(['error' => 'El perfil no existe'], 200);
         }

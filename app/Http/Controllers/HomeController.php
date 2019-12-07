@@ -13,10 +13,10 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description' =>'required|string|max:120',
-            'price_per_nigth' => 'required|digits:8',
-            'capacity' => 'required|digits:3|',
+            'price_per_night' => 'required|digits_between:1,6',
+            'capacity' => 'required|digits_between:1,2|',
             'walk' => 'required|boolean',
-            'days_available' => 'require|array|min:1|max:7',
+            'days_available' => 'required|string|min:1|max:7',
         ]);
     
         if ($validator->fails())
@@ -24,22 +24,39 @@ class HomeController extends Controller
             return response(['errors'=>$validator->errors()->all()], 422);
         }
         $image= $request->file('image');
-        $pet = new Pet;
-        $pet ->user_id= $request->user()->id;
+        $home = new Home;
+        $home ->user_id= $request->user()->id;
         $extension = $image->getClientOriginalExtension(); // you can also use file name
         $fileName = time().'.'.$extension;
-        $path = public_path().'/pets';
-        $pet ->image = $fileName ;
+        $path = public_path().'/homes';
+        $home ->image = $fileName ;
         $image->move($path, $fileName);
-        $pet ->name=$request->name ;
-        $pet ->size=$request->size;
-        $pet ->temperament=$request->temperament;
-        $pet ->race=$request->race ;
-        $request->description != null ? $pet ->description=$request->description : null;
-        $request->allergies != null ? $pet ->allergies=$request->allergies: null ;
-        $request->feeding != null ? $pet ->feeding=$request->feeding: null ;
-        $request->special_cares != null ? $pet ->allergies=$request->allergies: null ;
-        $pet->save();
-        return response($pet, 200);
+        $home ->description=$request->description ;
+        $home ->price_per_night=$request->price_per_night;
+        $home ->capacity=$request->capacity;
+        $home ->walk=$request->walk ;
+        $home ->days_available=$request->days_available;
+        $home->save();
+        return response($home, 200);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Home  $pet
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request)
+    {
+        $home = Home::where('id', $request->id)->first();
+
+        if($home){
+            $collections = Home::where('id', $home->id)->with('careTaker')
+            ->get();
+            return response(["Home" => $collections],200);
+
+        }else{
+            return response(["error" => "Home not found"],404);
+        }
     }
 }
