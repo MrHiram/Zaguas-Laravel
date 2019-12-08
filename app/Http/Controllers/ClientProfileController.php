@@ -57,7 +57,7 @@ class ClientProfileController extends Controller
 
         if ($check) {
             $edit =false;
-            $request->user() ? $request->user()->id == $check->user_id ? $edit= true: null :null;
+            $request->user()->id == $check->user_id ? $edit= true:null;
             $collections = User::where('id', $check->id)->with('clientProfile', 'pets')
                 ->get();
             foreach ($collections as $collection) {

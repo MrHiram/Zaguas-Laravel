@@ -6,7 +6,7 @@ use App\Pet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
-
+use File;
 
 class PetController extends Controller
 {
@@ -27,7 +27,8 @@ class PetController extends Controller
      */
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        if($request->user()->hasRole(["client"])){
+            $validator = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'name' =>'required|string|max:120',
             'size' => 'required|string|max:120|',
@@ -61,6 +62,9 @@ class PetController extends Controller
         $request->special_cares != null ? $pet ->allergies=$request->allergies: null ;
         $pet->save();
         return response($pet, 200);
+    }else{
+        return response(["message" => "No tienes la autorizacion para realizar esta accion."], 401);
+    }
     }
 
     
@@ -84,12 +88,13 @@ class PetController extends Controller
      */
     public function show(Request $request)
     {
-        $pet = Pet::where('id', $request->id)->first();
+        $pet = Pet::where('id', $request->id)->with('owner')
+            ->first();
 
         if($pet){
-            $collections = Pet::where('id', $pet->id)->with('owner')
-            ->get();
-            return response(["pet" => $collections],200);
+            $edit =false;
+            $request->user()->id == $pet->user_id ? $edit= true:null;
+            return response(["pet" => $pet, "edit" => $edit],200);
 
         }else{
             return response(["error" => "Pet not found"],404);
@@ -104,34 +109,79 @@ class PetController extends Controller
      */
     public function edit(Request $request)
     {
-        $pet=Pet::where('id',1)->first();
-
-        if($request->user()->id === $pet->user_id){
-            return response('edit',200);
+        if($request->user()->hasRole(["client"])){
+            $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'name' =>'string|max:120',
+            'size' => 'string|max:120|',
+            'temperament' => 'string|max:120|',
+            'race' => 'string|max:120|',
+            'description' => 'string|max:255|',
+            'allergies' => 'string|nullable|max:255|',
+            'feeding' => 'string|nullable|max:255|',
+            'specials_cares' => 'string|nullable|max:255|',
+        ]);
+    
+        if ($validator->fails())
+        {
+            return response(['errors'=>$validator->errors()->all()], 422);
         }
-        return response('no',422);
+        $pet = Pet::where("id",$request->id)->first();
+        if($request->user()->id === $pet->user_id){
+            $array =$request->all();
+            foreach($array as $key => $value)
+            {
+                
+                if($key == 'image'){
+                    $image= $request->file('image');
+                    $extension = $image->getClientOriginalExtension(); 
+                    $fileName = time().'.'.$extension;
+                    $path = public_path().'/pets';
+                    $image_path = 'pets/'. $pet ->$key;  
+                    $pet ->$key = $fileName ;
+                    $image->move($path, $fileName);
+                    $this->deleteFile($image_path);
+                    continue;
+                }
+                if($key == 'id') continue;
+
+                $pet ->$key=$value;
+                
+            
+            }
+                $pet->save();
+                return response($pet, 200);
+            }else{
+                return response(["error" => "No eres el dueno de esta mascota"],401);
+            }
+        }else{
+            return response(["message" => "No tienes la autorizacion para realizar esta accion."], 401);
+        }
+    
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Pet  $pet
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Pet $pet)
+    
+    public function delete(Request $request)
     {
-        //
+        $pet = Pet::where("id",$request->id)->first();
+        if($pet){
+            if($request->user()->id === $pet->user_id){
+                $image_path = "pets/". $pet ->image;  
+                $this->deleteFile($image_path);
+                $pet->delete();
+                return response(["message" => "mascota borrada"],200);
+
+            }else{
+                return response(["error" => "No eres el dueno de esta mascota"],401);
+            }
+        }
+         return response(["error" => "Hogar no existe"],404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Pet  $pet
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Pet $pet)
-    {
-        //
+    public function deleteFile($image_path){
+        if(File::exists($image_path)) {
+            File::delete($image_path);
+        }
     }
 }

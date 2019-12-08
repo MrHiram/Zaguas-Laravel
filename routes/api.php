@@ -17,11 +17,6 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });*/
-
-
-
-   
-    
     Route::get('prueba', function(){return response('patos',200);});
     // public routes
     Route::post('/login', 'Auth\LoginController@login');
@@ -52,6 +47,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::middleware('auth:api')->post('addPet','PetController@create');
     Route::middleware('auth:api')->post('editPet','PetController@edit');
     Route::middleware('auth:api')->get('pet/{id}', 'PetController@show');
+    Route::middleware('auth:api')->get('deletePet/{id}', 'PetController@delete');
+
 
     //crud profile client
     Route::middleware('auth:api')->post('assignClientRole', 'ClientProfileController@register');
@@ -60,8 +57,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     //crud caretaker profile
     Route::middleware('auth:api')->post('assignCareTakerRole', 'CareTakerProfileController@register');
     Route::middleware('auth:api')->get('getProfileCareTaker/{id}', 'CareTakerProfileController@getProfile');
-    //Crud homes
     
+    //Crud homes
     Route::middleware('auth:api')->post('addHome','HomeController@create');
-    Route::middleware('auth:api')->post('editPet','HomeController@edit');
+    Route::middleware('auth:api')->post('editHome','HomeController@edit');
     Route::middleware('auth:api')->get('home/{id}', 'HomeController@show');
+    Route::middleware('auth:api')->get('deleteHome/{id}', 'HomeController@delete');
