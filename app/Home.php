@@ -13,6 +13,6 @@ class Home extends Model
     /**Relation between home and owner */
     public function careTaker()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(CareTakerProfile::class,'care_taker_profile_id');
     }
 }

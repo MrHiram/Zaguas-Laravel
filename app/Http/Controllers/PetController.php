@@ -27,6 +27,7 @@ class PetController extends Controller
      */
     public function create(Request $request)
     {
+       
         if($request->user()->hasRole(["client"])){
             $validator = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -46,7 +47,7 @@ class PetController extends Controller
         }
         $image= $request->file('image');
         $pet = new Pet;
-        $pet ->user_id= $request->user()->id;
+        $pet ->client_profile_id= $request->user()->getIdProfileClient();
         $extension = $image->getClientOriginalExtension(); // you can also use file name
         $fileName = time().'.'.$extension;
         $path = public_path().'/pets';
@@ -93,7 +94,7 @@ class PetController extends Controller
 
         if($pet){
             $edit =false;
-            $request->user()->id == $pet->user_id ? $edit= true:null;
+            $request->$request->$request->user()->getIdProfileClient() == $pet->client_profile_id ? $edit= true:null;
             return response(["pet" => $pet, "edit" => $edit],200);
 
         }else{
@@ -128,7 +129,7 @@ class PetController extends Controller
             return response(['errors'=>$validator->errors()->all()], 422);
         }
         $pet = Pet::where("id",$request->id)->first();
-        if($request->user()->id === $pet->user_id){
+        if($request->user()->getIdProfileClient() === $pet->client_profile_id){
             $array =$request->all();
             foreach($array as $key => $value)
             {
@@ -166,7 +167,7 @@ class PetController extends Controller
     {
         $pet = Pet::where("id",$request->id)->first();
         if($pet){
-            if($request->user()->id === $pet->user_id){
+            if($request->user()->getIdProfileClient() === $pet->client_profile_id){
                 $image_path = "pets/". $pet ->image;  
                 $this->deleteFile($image_path);
                 $pet->delete();

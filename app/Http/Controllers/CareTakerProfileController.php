@@ -53,23 +53,24 @@ class CareTakerProfileController extends Controller
 
     public function getProfile(Request $request)
     {
-        $check = User::where('id', $request->id)->first();
+        $check = CareTakerProfile::where('id', $request->id)->first();
 
         if ($check) {
             $edit =false;
             $request->user()->id == $check->user_id ? $edit= true:null;
-            $collections = User::where('id', $check->id)->with('careTakerProfile', 'homes')
+            $collections = CareTakerProfile::where('id', $check->id)->with('user', 'homes')
                 ->get();
+                
             foreach ($collections as $collection) {
                 $homes =[];
-                $user["name"] = $collection->name;
-                $user["lastname"] = $collection->lastname;
-                $user["email"] = $collection->email;
-                $profile["id"] = $collection->careTakerProfile->id;
-                $profile["about"] = $collection->careTakerProfile->about;
-                $profile["address"] = $collection->careTakerProfile->address;
-                $profile["phone"] = $collection->careTakerProfile->phone;
-                $profile["image"] = url("profileCareTaker/".$collection->careTakerProfile->image);
+                $user["name"] = $collection->user->name;
+                $user["lastname"] = $collection->user->lastname;
+                $user["email"] = $collection->user->email;
+                $profile["id"] = $collection->id;
+                $profile["about"] = $collection->about;
+                $profile["address"] = $collection->address;
+                $profile["phone"] = $collection->phone;
+                $profile["image"] = url("profileCareTaker/".$collection->image);
                 if (!empty($collection->homes)) {
                     $i = 0;
                     foreach ($collection->homes as $home) {

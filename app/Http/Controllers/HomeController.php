@@ -28,7 +28,7 @@ class HomeController extends Controller
             }
             $image= $request->file('image');
             $home = new Home;
-            $home ->user_id= $request->user()->id;
+            $home ->care_taker_profile_id = $request->user()->getIdProfileCareTaker();
             $extension = $image->getClientOriginalExtension(); // you can also use file name
             $fileName = time().'.'.$extension;
             $path = public_path().'/homes';
@@ -40,7 +40,7 @@ class HomeController extends Controller
             $home ->walk=$request->walk ;
             $home ->days_available=$request->days_available;
             $home->save();
-            return response($home, 200);
+            return response(["message" =>"Hogar creado"], 200);
 
         }else{
             return response(["message" => "No tienes la autorizacion para realizar esta accion."], 401);
@@ -60,7 +60,7 @@ class HomeController extends Controller
 
         if($home){
             $edit =false;
-            $request->user()->id == $home->user_id ? $edit= true: null;
+            $request->user()->getIdProfileCareTaker() == $home->care_taker_profile_id ? $edit= true: null;
             return response(["Home" => $home, "edit"=> $edit],200);
 
         }else{
@@ -71,13 +71,13 @@ class HomeController extends Controller
     public function edit(Request $request){
         if($request->user()->hasRole(["care_taker"])){
             $validator = Validator::make($request->all(), [
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'image' => '|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'id' => 'required',
-                'description' =>'required|string|max:120',
-                'price_per_night' => 'required|digits_between:1,6',
-                'capacity' => 'required|digits_between:1,2|',
-                'walk' => 'required|boolean',
-                'days_available' => 'required|string|min:1|max:7',
+                'description' =>'|string|max:120',
+                'price_per_night' => '|digits_between:1,6',
+                'capacity' => '|digits_between:1,2|',
+                'walk' => '|boolean',
+                'days_available' => '|string|min:1|max:7',
             ]);
         
             if ($validator->fails())
@@ -85,22 +85,29 @@ class HomeController extends Controller
                 return response(['errors'=>$validator->errors()->all()], 422);
             }
             $home = Home::where("id",$request->id)->first();
-            if($request->user()->id === $home->user_id){
+            if($home && $request->user()->getIdProfileCareTaker() === $home->care_taker_profile_id ){
 
-                $image= $request->file('image');
-                $image_path = "homes/". $home ->image;  
-                deleteFile($image_path);
-                $extension = $image->getClientOriginalExtension(); // you can also use file name
-                $fileName = time().'.'.$extension;
-                $path = public_path().'/homes';
-                $home ->image = $fileName ;
-                $image->move($path, $fileName);
+            $array =$request->all();
+            foreach($array as $key => $value)
+            {
                 
-                $home ->description=$request->description ;
-                $home ->price_per_night=$request->price_per_night;
-                $home ->capacity=$request->capacity;
-                $home ->walk=$request->walk ;
-                $home ->days_available=$request->days_available;
+                if($key == 'image'){
+                    $image= $request->file('image');
+                    $extension = $image->getClientOriginalExtension(); 
+                    $fileName = time().'.'.$extension;
+                    $path = public_path().'/homes';
+                    $image_path = 'homes/'. $home ->$key;  
+                    $home ->$key = $fileName ;
+                    $image->move($path, $fileName);
+                    $this->deleteFile($image_path);
+                    continue;
+                }
+                if($key == 'id') continue;
+
+                $home ->$key=$value;
+                
+            
+            }
                 $home->save();
                 return response($home, 200);
             }else{
@@ -116,7 +123,7 @@ class HomeController extends Controller
         
          $home = Home::where("id",$request->id)->first();
          if($home){
-             if($request->user()->id === $home->user_id){
+             if($request->user()->getIdProfileCareTaker() === $home->care_taker_profile_id){
                 $image_path = "homes/". $home ->image;  
                 $this->deleteFile($image_path);
                 $home->delete();

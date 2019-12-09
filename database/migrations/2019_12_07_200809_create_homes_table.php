@@ -15,8 +15,8 @@ class CreateHomesTable extends Migration
     {
         Schema::create('homes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('care_taker_profile_id')->unsigned();
+            $table->foreign('care_taker_profile_id')->references('id')->on('care_taker_profiles');
             $table->string('image');
             $table->string('description');
             $table->double('price_per_night',8,2);

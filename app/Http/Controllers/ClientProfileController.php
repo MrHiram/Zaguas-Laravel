@@ -8,6 +8,7 @@ use App\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
+use File;
 
 class ClientProfileController extends Controller
 {
@@ -53,22 +54,23 @@ class ClientProfileController extends Controller
 
     public function getProfile(Request $request)
     {
-        $check = User::where('id', $request->id)->first();
+        $check = ClientProfile::where('id', $request->id)->first();
 
         if ($check) {
             $edit =false;
             $request->user()->id == $check->user_id ? $edit= true:null;
-            $collections = User::where('id', $check->id)->with('clientProfile', 'pets')
+            $collections = ClientProfile::where('id', $check->id)->with('user', 'pets')
                 ->get();
+            
             foreach ($collections as $collection) {
-                $user["name"] = $collection->name;
-                $user["lastname"] = $collection->lastname;
-                $user["email"] = $collection->email;
-                $profile["id"] = $collection->clientProfile->id;
-                $profile["about"] = $collection->clientProfile->about;
-                $profile["address"] = $collection->clientProfile->address;
-                $profile["phone"] = $collection->clientProfile->phone;
-                $profile["image"] = url("profileClients/".$collection->clientProfile->image);
+                $user["name"] = $collection->user->name;
+                $user["lastname"] = $collection->user->lastname;
+                $user["email"] = $collection->user->email;
+                $profile["id"] = $collection->id;
+                $profile["about"] = $collection->about;
+                $profile["address"] = $collection->address;
+                $profile["phone"] = $collection->phone;
+                $profile["image"] = url("profileClients/".$collection->image);
                 if ($collection->pets) {
                     $i = 0;
                     foreach ($collection->pets as $pet) {
@@ -82,6 +84,32 @@ class ClientProfileController extends Controller
             return response(['user' => $user, 'profile' => $profile, 'pets' => $pets, "edit"=>$edit], 200);
         } else {
             return response(['error' => 'El perfil no existe'], 200);
+        }
+    }
+
+    public function edit(Request $request){
+
+    }
+
+    public function delete(Request $request){
+        $profile = ClientProfile::where("id",$request->id)->first();
+         if($profile){
+             if($request->user()->id === $profile->user_id){
+                $image_path = "profileClients/". $profile ->image;  
+                $this->deleteFile($image_path);
+                $profile->delete();
+                return response(["message" => "Perfil cliente eliminado borrado"],200);
+
+             }else{
+                return response(["error" => "No eres el usario de este perfil"],401);
+             }
+         }
+         return response(["error" => "Perfil cliente no existe no existe"],404);
+    }
+
+    public function deleteFile($image_path){
+        if(File::exists($image_path)) {
+            File::delete($image_path);
         }
     }
 }

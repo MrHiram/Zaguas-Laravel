@@ -14,7 +14,7 @@ class CreateCareTakerProfilesTable extends Migration
     public function up()
     {
         Schema::create('care_taker_profiles', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('image');
