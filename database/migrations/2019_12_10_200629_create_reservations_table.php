@@ -19,7 +19,7 @@ class CreateReservationsTable extends Migration
             $table->integer('care_taker_profile_id')->unsigned();
             $table->foreign('client_profile_id')->references('id')->on('client_profiles');
             $table->foreign('care_taker_profile_id')->references('id')->on('care_taker_profiles');
-            $table->date('');
+            $table->double('total_price');
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();

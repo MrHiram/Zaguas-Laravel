@@ -71,7 +71,7 @@ class CareTakerProfileController extends Controller
                 $profile["address"] = $collection->address;
                 $profile["phone"] = $collection->phone;
                 $profile["image"] = url("profileCareTaker/".$collection->image);
-                if (!empty($collection->homes)) {
+                if (count($collection->homes) > 0) {
                     $i = 0;
                     foreach ($collection->homes as $home) {
                         $homes[$i]["id"] = $home->id;

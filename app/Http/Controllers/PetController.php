@@ -62,7 +62,7 @@ class PetController extends Controller
         $request->feeding != null ? $pet ->feeding=$request->feeding: null ;
         $request->special_cares != null ? $pet ->allergies=$request->allergies: null ;
         $pet->save();
-        return response($pet, 200);
+        return response(["message" =>"Mascota creada correctamente"], 200);
     }else{
         return response(["message" => "No tienes la autorizacion para realizar esta accion."], 401);
     }

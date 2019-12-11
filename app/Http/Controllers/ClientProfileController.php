@@ -71,7 +71,8 @@ class ClientProfileController extends Controller
                 $profile["address"] = $collection->address;
                 $profile["phone"] = $collection->phone;
                 $profile["image"] = url("profileClients/".$collection->image);
-                if ($collection->pets) {
+               
+                if (count($collection->pets) > 0) {
                     $i = 0;
                     foreach ($collection->pets as $pet) {
                         $pets[$i]["id"] = $pet->id;
@@ -79,9 +80,10 @@ class ClientProfileController extends Controller
                         $pets[$i]["image"] = url("pets/".$pet->image);
                         $i++;
                     }
+                    return response(['user' => $user, 'profile' => $profile, 'pets' => $pets, "edit"=>$edit], 200);
                 }
             }
-            return response(['user' => $user, 'profile' => $profile, 'pets' => $pets, "edit"=>$edit], 200);
+            return response(['user' => $user, 'profile' => $profile,  "edit"=>$edit], 200);
         } else {
             return response(['error' => 'El perfil no existe'], 200);
         }
