@@ -21,5 +21,9 @@ class Pet extends Model
     {
         return $this->belongsTo(ClientProfile::class,'client_profile_id');
     }
+
+    public function reservations(){
+        return $this->belongsToMany(Reservation::class)->withTimestamps();
+    }
     
 }

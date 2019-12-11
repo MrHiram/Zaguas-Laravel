@@ -87,7 +87,8 @@ class ClientProfileController extends Controller
         }
     }
 
-    public function edit(Request $request){
+    public function getClientProfileID(Request $request){
+        return response(["id" => $request->user()->getIdProfileClient()],200);
 
     }
 
