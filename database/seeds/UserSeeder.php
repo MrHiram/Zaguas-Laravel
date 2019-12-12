@@ -22,10 +22,7 @@ class UserSeeder extends Seeder
         $user->activation_token = "default";
         
         $user->save();
-        $role = Role::where('name', 'client')->first();
-        $user->roles()->attach($role);
-        $role2 = Role::where('name', 'care_taker')->first();
-        $user->roles()->attach($role2);
+       
         
     }
 }
