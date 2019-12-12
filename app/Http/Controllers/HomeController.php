@@ -61,6 +61,8 @@ class HomeController extends Controller
                 'description' =>$item->description,
                 'price' => $item->price_per_night,
                 'care_taker_image'=>url("profileCareTaker/".$item->careTaker->image),
+                'walk' => $item->walk,
+                'capacity' => $item->capacity,
             ];
     });
     $homesTransformedAndPaginated = new \Illuminate\Pagination\LengthAwarePaginator(

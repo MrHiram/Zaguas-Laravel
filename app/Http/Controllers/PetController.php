@@ -89,13 +89,14 @@ class PetController extends Controller
      */
     public function show(Request $request)
     {
-        $pet = Pet::where('id', $request->id)->with('owner')
+        $pet = Pet::where('id', $request->id)->with('owner.user')
             ->first();
 
         if($pet){
             $edit =false;
             $request->user()->getIdProfileClient() == $pet->client_profile_id ? $edit= true:null;
-            $pet->owner->image=url("pets/".$pet->owner->image);
+            $pet->owner->image=url("clientProfile/".$pet->owner->image);
+            $pet->image=url("pets/".$pet->image);
             return response(["pet" => $pet, "edit" => $edit],200);
 
         }else{
