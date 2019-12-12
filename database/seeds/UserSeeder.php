@@ -22,6 +22,18 @@ class UserSeeder extends Seeder
         $user->activation_token = "default";
         
         $user->save();
+
+        $user2 = new User();
+        $user2->name = "Zaguas";
+        $user2->lastname =  "Zaguas";
+        $user2->email = "zaguas@gmail.com";
+        $user2->password = Hash::make('patos.4k');;
+        $user2->active = 1;
+        $user2->activation_token = "default";
+        
+        $user2->save();
+        $role = Role::where("name","care_taker")->first();
+        $user2->roles()->attach($role);
        
         
     }

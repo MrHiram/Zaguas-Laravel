@@ -64,3 +64,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::middleware('auth:api')->post('editHome','HomeController@edit');
     Route::middleware('auth:api')->get('home/{id}', 'HomeController@show');
     Route::middleware('auth:api')->get('deleteHome/{id}', 'HomeController@delete');
+    Route::middleware('auth:api')->get('getHomes/', 'HomeController@homeFeed');
+
+

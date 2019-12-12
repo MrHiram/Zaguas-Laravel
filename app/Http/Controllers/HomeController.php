@@ -48,6 +48,35 @@ class HomeController extends Controller
         
     }
 
+    public function homeFeed(){
+        $homes= Home::with('careTaker.user')->paginate(5);
+        $homeTransformed = $homes
+        ->getCollection()
+        ->map(function($item) {
+            return [
+                'id' => $item->id,
+                'userName'=> $item->careTaker->user->name,
+                'image' => url("homes/".$item->image),
+                'location' => $item->careTaker->address,
+                'description' =>$item->description,
+                'price' => $item->price_per_night,
+                'care_taker_image'=>url("profileCareTaker/".$item->careTaker->image),
+            ];
+    });
+    $homesTransformedAndPaginated = new \Illuminate\Pagination\LengthAwarePaginator(
+        $homeTransformed,
+        $homes->total(),
+        $homes->perPage(),
+        $homes->currentPage(), [
+            'path' => \Request::url(),
+            'query' => [
+                'page' => $homes->currentPage()
+            ]
+        ]
+    );
+        return response(['homes' => $homesTransformedAndPaginated],200);
+    }
+
     /**
      * Display the specified resource.
      *

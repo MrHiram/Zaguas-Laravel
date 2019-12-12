@@ -64,7 +64,7 @@ class PetController extends Controller
         $pet->save();
         return response(["message" =>"Mascota creada correctamente"], 200);
     }else{
-        return response(["message" => "No tienes la autorizacion para realizar esta accion."], 401);
+        return response(['error' => ['No tienes la autorizacion para realizar esta accion.']]);
     }
     }
 
@@ -94,7 +94,8 @@ class PetController extends Controller
 
         if($pet){
             $edit =false;
-            $request->$request->$request->user()->getIdProfileClient() == $pet->client_profile_id ? $edit= true:null;
+            $request->user()->getIdProfileClient() == $pet->client_profile_id ? $edit= true:null;
+            $pet->owner->image=url("pets/".$pet->owner->image);
             return response(["pet" => $pet, "edit" => $edit],200);
 
         }else{
