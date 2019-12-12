@@ -95,7 +95,7 @@ class PetController extends Controller
         if($pet){
             $edit =false;
             $request->user()->getIdProfileClient() == $pet->client_profile_id ? $edit= true:null;
-            $pet->owner->image=url("clientProfile/".$pet->owner->image);
+            $pet->owner->image=url("profileClients/".$pet->owner->image);
             $pet->image=url("pets/".$pet->image);
             return response(["pet" => $pet, "edit" => $edit],200);
 
