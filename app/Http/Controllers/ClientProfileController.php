@@ -110,6 +110,52 @@ class ClientProfileController extends Controller
          return response(["error" => "Perfil cliente no existe no existe"],404);
     }
 
+    public function edit(Request $request){
+        if($request->user()->hasRole(["client"])){
+            $validator = Validator::make($request->all(), [
+                'image' => '|image|mimes:jpeg,png,jpg|max:2048',
+                'aboutMe' => '|string|max:255',
+                'phone' => '|string',
+                'address' => '|string|max:255',
+        ]);
+    
+        if ($validator->fails())
+        {
+            return response(['errors'=>$validator->errors()->all()], 422);
+        }
+        $clientProfile = ClientProfile::where("id",$request->id)->first();
+        if($request->user()->getIdProfileClient() === $clientProfile->client_profile_id){
+            $array =$request->all();
+            foreach($array as $key => $value)
+            {
+                
+                if($key == 'image'){
+                    $image= $request->file('image');
+                    $extension = $image->getClientOriginalExtension(); 
+                    $fileName = time().'.'.$extension;
+                    $path = public_path().'/profileClients';
+                    $image_path = 'profileClients/'. $clientProfile ->$key;  
+                    $clientProfile ->$key = $fileName ;
+                    $image->move($path, $fileName);
+                    $this->deleteFile($image_path);
+                    continue;
+                }
+                if($key == 'id') continue;
+
+                $clientProfile ->$key=$value;
+                
+            
+            }
+                $clientProfile->save();
+                return response($clientProfile, 200);
+            }else{
+                return response(["error" => "No eres el dueno de este perfil"],401);
+            }
+        }else{
+            return response(["message" => "No tienes la autorizacion para realizar esta accion."], 401);
+        }
+    }
+
     public function deleteFile($image_path){
         if(File::exists($image_path)) {
             File::delete($image_path);

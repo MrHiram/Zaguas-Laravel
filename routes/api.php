@@ -54,6 +54,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::middleware('auth:api')->post('assignClientRole', 'ClientProfileController@register');
     Route::middleware('auth:api')->get('getProfileClient/{id}', 'ClientProfileController@getProfile');
     Route::middleware('auth:api')->get('getClientID','ClientProfileController@getClientProfileID');
+    Route::middleware('auth:api')->post('editProfileClient/','ClientProfileController@edit');
 
     //crud caretaker profile
     Route::middleware('auth:api')->post('assignCareTakerRole', 'CareTakerProfileController@register');
