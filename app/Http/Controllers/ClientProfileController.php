@@ -113,6 +113,7 @@ class ClientProfileController extends Controller
     public function edit(Request $request){
         if($request->user()->hasRole(["client"])){
             $validator = Validator::make($request->all(), [
+                'edit' => 'required',
                 'image' => '|image|mimes:jpeg,png,jpg|max:2048',
                 'aboutMe' => '|string|max:255',
                 'phone' => '|string',

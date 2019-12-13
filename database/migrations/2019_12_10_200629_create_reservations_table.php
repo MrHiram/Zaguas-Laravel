@@ -14,12 +14,13 @@ class CreateReservationsTable extends Migration
     public function up()
     {
         Schema::create('reservations', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->integer('client_profile_id')->unsigned();
             $table->integer('care_taker_profile_id')->unsigned();
             $table->foreign('client_profile_id')->references('id')->on('client_profiles');
+            $table->integer('home_id')->unsigned();
+            $table->foreign('home_id')->references('id')->on('homes');
             $table->foreign('care_taker_profile_id')->references('id')->on('care_taker_profiles');
-            $table->double('total_price');
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();

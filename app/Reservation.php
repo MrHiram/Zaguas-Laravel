@@ -17,7 +17,7 @@ class Reservation extends Model
     }
 
     public function pets(){
-        return $this->hasMany(Pets::class)->withTimestamps();
+        return $this->belongsToMany(Pet::class)->withTimestamps();
 
     }
 }

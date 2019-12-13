@@ -164,6 +164,15 @@ class PetController extends Controller
     
     }
 
+    public function petsClient(Request $request){
+
+        $pets = Pet::where("client_profile_id",$request->user()->getIdProfileClient())->get();
+        foreach($pets as $pet){
+            $pet->image = url('pets/'.$pet->image);
+        }
+        return response(["pets" => $pets],200);
+    }
+
     
     public function delete(Request $request)
     {

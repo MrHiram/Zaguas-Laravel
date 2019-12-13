@@ -48,6 +48,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::middleware('auth:api')->post('editPet','PetController@edit');
     Route::middleware('auth:api')->get('pet/{id}', 'PetController@show');
     Route::middleware('auth:api')->get('deletePet/{id}', 'PetController@delete');
+    Route::middleware('auth:api')->get('getPetsclient/', 'PetController@petsClient');
 
 
     //crud profile client
@@ -66,5 +67,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::middleware('auth:api')->get('home/{id}', 'HomeController@show');
     Route::middleware('auth:api')->get('deleteHome/{id}', 'HomeController@delete');
     Route::middleware('auth:api')->get('getHomes/', 'HomeController@homeFeed');
+
+    //reservation crud
+    Route::middleware('auth:api')->post('addReservation','ReservationController@create');
+    
 
 
