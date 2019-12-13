@@ -19,7 +19,11 @@ class Pet extends Model
     /**Relation between pet and owner */
     public function owner()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(ClientProfile::class,'client_profile_id');
+    }
+
+    public function reservations(){
+        return $this->belongsToMany(Reservation::class)->withTimestamps();
     }
     
 }

@@ -49,10 +49,9 @@ class User extends Authenticatable
     }
 
     /**Relation between owner and pets */
-    public function pets()
-    {
-        return $this->hasMany(Pet::class);
-    }
+    
+
+    
     public function clientProfile(){
         
         return $this->hasOne(ClientProfile::class);
@@ -91,4 +90,14 @@ class User extends Authenticatable
     }
         return false;
 }
+
+    public function getIdProfileClient(){
+        return $this->clientProfile()->select('id')->get()[0]["id"];
+        
+    }
+
+    public function getIdProfileCareTaker(){
+        return $this->careTakerProfile()->select('id')->get()[0]["id"];
+        
+    }
 }

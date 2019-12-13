@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePetsTable extends Migration
+class CreateReservationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,17 @@ class CreatePetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pets', function (Blueprint $table) {
+        Schema::create('reservations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('client_profile_id')->unsigned();
+            $table->integer('care_taker_profile_id')->unsigned();
             $table->foreign('client_profile_id')->references('id')->on('client_profiles');
-            $table->string('image');
-            $table->string('name');
-            $table->string('size');
-            $table->string('temperament');
-            $table->string('race');
-            $table->string('description')->nullable();
-            $table->string('allergies')->nullable();
-            $table->string('feeding')->nullable();
-            $table->string('specials_cares')->nullable();
+            $table->integer('home_id')->unsigned();
+            $table->foreign('home_id')->references('id')->on('homes');
+            $table->foreign('care_taker_profile_id')->references('id')->on('care_taker_profiles');
+            $table->string('status');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->timestamps();
         });
     }
@@ -37,6 +35,6 @@ class CreatePetsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pets');
+        Schema::dropIfExists('reservations');
     }
 }
