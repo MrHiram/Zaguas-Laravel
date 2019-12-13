@@ -21,6 +21,7 @@ class CreateReservationsTable extends Migration
             $table->integer('home_id')->unsigned();
             $table->foreign('home_id')->references('id')->on('homes');
             $table->foreign('care_taker_profile_id')->references('id')->on('care_taker_profiles');
+            $table->string('status');
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();

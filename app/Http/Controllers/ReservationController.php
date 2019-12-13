@@ -42,6 +42,7 @@ class ReservationController extends Controller
             $reservation->home_id =$home->id;;
             $reservation->start_date =$request->start_date;
             $reservation->end_date =$request->end_date;
+            $reservation->status ='pendiente';
             
             $reservation->save();
 
@@ -77,9 +78,16 @@ class ReservationController extends Controller
      * @param  \App\Reservation  $reservation
      * @return \Illuminate\Http\Response
      */
-    public function show(Reservation $reservation)
+    public function show(Request $request)
     {
-        //
+        $reservations =Reservation::where("client_profile_id",$request->user()->getIdProfileClient())
+        ->with('home','careTaker.user')->get();
+        foreach($reservations as $reservation){
+            $reservation->home->image = url('homes/'.$reservation->home->image);
+            $reservation->careTaker->image = url('profileCareTaker/'.$reservation->careTaker->image);
+        }
+       
+        return response(["reservations" => $reservations],200);
     }
 
     /**

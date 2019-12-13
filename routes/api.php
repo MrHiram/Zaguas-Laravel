@@ -70,6 +70,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
     //reservation crud
     Route::middleware('auth:api')->post('addReservation','ReservationController@create');
+    Route::middleware('auth:api')->get('getReservations','ReservationController@show');
     
 
 
