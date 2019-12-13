@@ -82,12 +82,25 @@ class ReservationController extends Controller
     {
         $reservations =Reservation::where("client_profile_id",$request->user()->getIdProfileClient())
         ->with('home','careTaker.user')->get();
-        foreach($reservations as $reservation){
-            $reservation->home->image = url('homes/'.$reservation->home->image);
-            $reservation->careTaker->image = url('profileCareTaker/'.$reservation->careTaker->image);
-        }
+        
+       $defi= $reservations->map(function($item) {
+            return [
+                'careTakerImage' =>url('profileCareTaker/'.$item->careTaker->image),
+                'homeImage'=>url('homes/'.$item->home->image),
+                'price_per_night'=>$item->home->price_per_night,
+                'ownerLocation'=>$item->careTaker->address,
+                'start_date'=>$item->start_date,
+                'careTakerName'=>$item->careTaker->user->name,
+                'end_date'=>$item->end_date,
+                'status'=>$item->status,
+                'id' => $item->id,
+            ];
+            
+    });
+            
+        //}
        
-        return response(["reservations" => $reservations],200);
+        return response(["reservations" => $defi],200);
     }
 
     /**
